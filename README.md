@@ -4,13 +4,51 @@
 
  - documentation at : [pm2 documentation](https://pm2.keymetrics.io/docs/usage/quick-start);
 
+# init the nodejs project 
+
+ - this project is need if you want to use 'rollup' NodeJS package :
+
+```
+npm init 
+...
+package name: (pm2-process-manager_001)
+version: (1.0.0)
+description: simple exampe with pm2 and other features
+entry point: (app.js)
+test command:
+git repository:
+keywords: catafest,nodejs,pm2
+author: catafest
+license: (ISC)
+About to write to C:\PM2-process-manager_001\package.json:
+
+{
+  "name": "pm2-process-manager_001",
+  "version": "1.0.0",
+  "description": "simple exampe with pm2 and other features",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "catafest",
+    "nodejs",
+    "pm2"
+  ],
+  "author": "catafest",
+  "license": "ISC"
+}
+
+Is this OK? (yes) yes```
+
 # create the project and installation
 
 ```C:\>mkdir PM2-process-manager_001
 
 C:\>cd PM2-process-manager_001
 
-C:\PM2-process-manager_001>npm install pm2@latest -g```
+C:\PM2-process-manager_001>npm install pm2@latest -g
+```
 
  - create a new javascript process manager example named 'app.js':
 
@@ -23,7 +61,8 @@ File C:\PM2-process-manager_001\ecosystem.config.js generated```
 
  - this command will update the in-memory PM2:
 
- ```pm2 update
+```
+pm2 update
 Be sure to have the latest version by doing `npm install pm2@latest -g` before doing this procedure.
 [PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
 [PM2] [app](0) ✓
@@ -42,7 +81,8 @@ Be sure to have the latest version by doing `npm install pm2@latest -g` before d
 
  - this command will show the table with status information:
 
-```pm2 status
+```
+pm2 status
 ┌────┬────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
 │ id │ name   │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
 ├────┼────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
@@ -51,7 +91,8 @@ Be sure to have the latest version by doing `npm install pm2@latest -g` before d
 ```
 
  - the 'app.js' file can be used with these commands:
- ```
+ 
+```
  \PM2-process-manager_001>pm2 start app.js --name my-app
 [PM2] Starting C:\PM2-process-manager_001\app.js in fork_mode (1 instance)
 [PM2] Done.
@@ -76,4 +117,49 @@ pm2 stop my-app
 [PM2][WARN] Current process list is not synchronized with saved list. Type 'pm2 save' to synchronize.
 
 ```
- 
+
+# using the rollup
+
+- add "type": "module" into this config file : package.json;
+- fix the app.js file:
+
+```
+//const http = require('http');
+import http from 'http';
+```
+
+- install the 'rollup' and 'http' NodeJS modules:
+
+```
+npm install http
+npm install -g rollup
+```
+ - add this setting file named 'rollup.config.js' :
+
+```
+export default {
+  input: 'app.js',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'esm'// to use import in ass.js
+  }
+};
+
+```
+
+- use the rollup command and test it with node dist/bundle.js:
+
+```
+PM2-process-manager_001>rollup -c
+
+app.js → dist/bundle.js...
+(!) Unresolved dependencies
+https://rollupjs.org/troubleshooting/#warning-treating-module-as-external-dependency
+http (imported by "app.js")
+created dist/bundle.js in 41ms
+
+C:\PM2-process-manager_001>node dist/bundle.js
+Server is running on port 3000
+
+```
+ - see the result on the server at : http://localhost:3000 ;
